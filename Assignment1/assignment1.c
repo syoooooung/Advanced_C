@@ -32,16 +32,7 @@ void print_after_sort();
 void pirnt_2d_linked();
 void re_sort();
 void insertion_sort(int num);
-void tmp_print() {
-	Node2* c = head2;
-	while (c != NULL) {
-		printf("%s, %s ->", c->name, c->subject);
-		c = c->down;
 
-	}
-	printf("\n");
-
-}
 int main() {
 	init_node();
 	print_before_sort();
@@ -68,9 +59,7 @@ void init_node() {
 
 		create_linkedlist(imsi_name, imsi_sub, sc);
 		create_2D_linked(imsi_name, imsi_sub, sc);
-		printf("\n\n내차례 %s %s\n", imsi_name, imsi_sub);
 		
-		pirnt_2d_linked();
 		node_cnt++;
 
 	}
@@ -101,14 +90,12 @@ void create_2D_linked(char* nm, char* sub, int sc) {
 			if (pre_node == NULL){
 				head2 = new_node;
 				new_node->down = curr_node;
-				printf("1\n");
 				return;
 			}
 			//연결이 됐는데 안돼
 			new_node->down = curr_node;
 			pre_node->down = new_node;
-			printf("2  %s,%s->%s->%s\n",pre_node->name,pre_node->subject, pre_node->down->name, pre_node->down->down->name);
-		
+			
 			return;
 		}
 		else if (cmp_result == 0) {//이미 같은 이름이 있음!
@@ -123,7 +110,7 @@ void create_2D_linked(char* nm, char* sub, int sc) {
 							head2 = new_node;
 							new_node->down = curr_node->down;
 							new_node->next = curr_node;
-							printf("3\n");
+							
 							return;
 						}
 						curr_node->is_head = 0;
@@ -131,19 +118,19 @@ void create_2D_linked(char* nm, char* sub, int sc) {
 						new_node->down = curr_node->down;
 						pre_node->down = new_node;
 						new_node->next = curr_node;
-						printf("4\n");
+						
 						return;
 					}
 					pre_node->next = new_node;
 					new_node->next = curr_node;
-					printf("5\n");
+					
 					return;
 				}
 				pre_node = curr_node;
 				curr_node = curr_node->next;
 			}
 			pre_node->next = new_node;
-			printf("6\n");
+			
 			return;
 		}
 
@@ -154,27 +141,34 @@ void create_2D_linked(char* nm, char* sub, int sc) {
 	}
 	pre_node->down = new_node;
 	new_node->is_head = 1;
-	printf("7\n");
 	return;
 }
 void pirnt_2d_linked() {
+	FILE* fwp;
+	fwp = fopen("record.txt", "a");
 	Node2* curr = head2;
 	while (curr->down != NULL) {
 		Node2* tmp = curr;
 		while (curr->next != NULL) {
 			printf("(%s, %s, %d)->", curr->name, curr->subject, curr->score);
+			fprintf(fwp,"(%s, %s, %d)->", curr->name, curr->subject, curr->score);
 			curr = curr->next;
 		}
 		printf("(%s, %s, %d)\n", curr->name, curr->subject, curr->score);
 		printf("  |\n  V\n");
+		fprintf(fwp,"(%s, %s, %d)\n", curr->name, curr->subject, curr->score);
+		fprintf(fwp,"  |\n  V\n");
 		curr = tmp;
 		curr = curr->down;
 	}
 	while (curr->next != NULL) {
 		printf("(%s, %s, %d)->", curr->name, curr->subject, curr->score);
+		fprintf(fwp,"(%s, %s, %d)->", curr->name, curr->subject, curr->score);
 		curr = curr->next;
 	}
 	printf("(%s, %s, %d)\n", curr->name, curr->subject, curr->score);
+	fprintf(fwp,"(%s, %s, %d)\n", curr->name, curr->subject, curr->score);
+	fclose(fwp);
 }
 void create_linkedlist(char* nm, char* sub, int sc){
 	Node* new_node =(struct node*) calloc(sizeof(struct node),1);
@@ -234,6 +228,7 @@ void create_linkedlist(char* nm, char* sub, int sc){
 				curr_node = curr_node->next;
 				
 			}
+			pre_node->next = new_node;
 			return;
 
 		}
@@ -249,7 +244,7 @@ void create_linkedlist(char* nm, char* sub, int sc){
 
 void print_before_sort() {
 	FILE* fwp;
-	fwp = fopen("recored.txt", "w");
+	fwp = fopen("record.txt", "w");
 	Node* curr = head;
 	fprintf(fwp, "이름\t과목\t점수\n");
 	printf("이름\t과목\t점수\n");
@@ -357,10 +352,10 @@ void insertion_sort(int num) {
 
 void print_after_sort() {
 	FILE* fwp;
-	fwp = fopen("recored.txt", "a");
+	fwp = fopen("record.txt", "a");
 	Node* curr = head;
-	fprintf(fwp, "이름\t과목\t점수\n");
-	printf( "이름\t과목\t점수\n");
+	fprintf(fwp, "\n\n이름\t과목\t점수\n");
+	
 	float result = 0.0;
 	int div = 0;
 	while (curr != NULL) {
