@@ -32,6 +32,16 @@ void print_after_sort();
 void pirnt_2d_linked();
 void re_sort();
 void insertion_sort(int num);
+void tmp_print() {
+	Node2* c = head2;
+	while (c != NULL) {
+		printf("%s, %s ->", c->name, c->subject);
+		c = c->down;
+
+	}
+	printf("\n");
+
+}
 int main() {
 	init_node();
 	print_before_sort();
@@ -58,6 +68,9 @@ void init_node() {
 
 		create_linkedlist(imsi_name, imsi_sub, sc);
 		create_2D_linked(imsi_name, imsi_sub, sc);
+		printf("\n\n내차례 %s %s\n", imsi_name, imsi_sub);
+		
+		pirnt_2d_linked();
 		node_cnt++;
 
 	}
@@ -74,8 +87,10 @@ void create_2D_linked(char* nm, char* sub, int sc) {
 	new_node->is_head = 0;
 	if (head2 == NULL) { //만약 리스트가 비어있다면
 		head2 = new_node;
+		new_node->is_head = 1;
 		return;
 	}
+	//2,4번과 6번을 수정하라
 	Node2* pre_node = NULL;
 	Node2* curr_node = head2;
 	while (curr_node != NULL) {
@@ -83,41 +98,52 @@ void create_2D_linked(char* nm, char* sub, int sc) {
 		if (cmp_result > 0) { //newnode를 currnode 위에 넣어줘야해
 			//새로운 줄 생기는 거니까
 			new_node->is_head = 1;
-			if (pre_node == NULL) {
+			if (pre_node == NULL){
 				head2 = new_node;
 				new_node->down = curr_node;
+				printf("1\n");
 				return;
 			}
-			pre_node->down = new_node;
+			//연결이 됐는데 안돼
 			new_node->down = curr_node;
+			pre_node->down = new_node;
+			printf("2  %s,%s->%s->%s\n",pre_node->name,pre_node->subject, pre_node->down->name, pre_node->down->down->name);
+		
 			return;
 		}
 		else if (cmp_result == 0) {//이미 같은 이름이 있음!
 			//과목명 비교 시작
+			
 			while (curr_node != NULL) {
 				if (strcmp(curr_node->subject, new_node->subject) >= 0) {
-					if (curr_node->is_head == 1) {
-						if (pre_node == NULL) {
+					if (curr_node->is_head == 1) { 
+						if (pre_node == NULL) { //넣어야할 부분이 해드라면
 							curr_node->is_head = 0;
 							new_node->is_head = 1;
 							head2 = new_node;
 							new_node->down = curr_node->down;
+							new_node->next = curr_node;
+							printf("3\n");
 							return;
 						}
 						curr_node->is_head = 0;
 						new_node->is_head = 1;
-						pre_node->down = new_node;
 						new_node->down = curr_node->down;
+						pre_node->down = new_node;
+						new_node->next = curr_node;
+						printf("4\n");
 						return;
 					}
 					pre_node->next = new_node;
 					new_node->next = curr_node;
+					printf("5\n");
 					return;
 				}
 				pre_node = curr_node;
 				curr_node = curr_node->next;
 			}
-			pre_node->next = curr_node;
+			pre_node->next = new_node;
+			printf("6\n");
 			return;
 		}
 
@@ -128,19 +154,25 @@ void create_2D_linked(char* nm, char* sub, int sc) {
 	}
 	pre_node->down = new_node;
 	new_node->is_head = 1;
+	printf("7\n");
 	return;
 }
 void pirnt_2d_linked() {
 	Node2* curr = head2;
 	while (curr->down != NULL) {
+		Node2* tmp = curr;
 		while (curr->next != NULL) {
 			printf("(%s, %s, %d)->", curr->name, curr->subject, curr->score);
 			curr = curr->next;
 		}
 		printf("(%s, %s, %d)\n", curr->name, curr->subject, curr->score);
 		printf("  |\n  V\n");
+		curr = tmp;
 		curr = curr->down;
-		
+	}
+	while (curr->next != NULL) {
+		printf("(%s, %s, %d)->", curr->name, curr->subject, curr->score);
+		curr = curr->next;
 	}
 	printf("(%s, %s, %d)\n", curr->name, curr->subject, curr->score);
 }
