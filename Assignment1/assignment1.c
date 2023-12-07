@@ -25,13 +25,13 @@ Node* head2 = NULL;
 int node_cnt = 0;
 
 void init_node(); //score.txt에서 정보 읽어오는 함수
-void create_linkedlist(char* nm, char* sub, int sc);
-void create_2D_linked(char* nm, char* sub, int sc);
-void print_before_sort();
-void print_after_sort();
-void pirnt_2d_linked();
-void re_sort();
-void insertion_sort(int num);
+void create_linkedlist(char* nm, char* sub, int sc); //1차원 링크드리스트에 노드 추가 시 호출
+void create_2D_linked(char* nm, char* sub, int sc); //2차원 링크드리스트에 노드 추가 시 호출
+void print_before_sort(); //초기 1차원 링크드리스트 출력
+void print_after_sort(); //재정렬 후 1차원 링크드 리스트 출력
+void pirnt_2d_linked(); //2차원 링크드리스트 출력
+void re_sort();  //재정렬
+void insertion_sort(int num); //insertion sort
 
 int main() {
 	init_node();
@@ -42,10 +42,10 @@ int main() {
 }
 void init_node() {
 	FILE* frp;
-	frp = fopen("score.txt", "r");
+	frp = fopen("score.txt", "r"); //score.txt를 read권한으로 연다
 	int is_fir = 0;
 	while (!feof(frp)) {
-		if (is_fir == 0) {
+		if (is_fir == 0) { //첫줄은 저장하지 않는다
 			char trash[30];
 			fscanf(frp, "%[^\n]\n", trash);
 			is_fir = 1;
@@ -55,11 +55,11 @@ void init_node() {
 		char imsi_sub[20];
 		int sc;
 		fscanf(frp, "%[^\t]\t%s", imsi_name, imsi_sub);
-		fscanf(frp, "\t%d\n", &sc);
+		fscanf(frp, "\t%d\n", &sc); //이름, 과목, 점수를 읽어옴
 
-		create_linkedlist(imsi_name, imsi_sub, sc);
-		create_2D_linked(imsi_name, imsi_sub, sc);
-		
+		create_linkedlist(imsi_name, imsi_sub, sc); //1차원 링크드리스트에 해당 정보를 저장할 노드 추가
+		create_2D_linked(imsi_name, imsi_sub, sc); //2차원 링크드리스트에 해당 정보를 저장할 노드 추가
+
 		node_cnt++;
 
 	}
@@ -79,7 +79,6 @@ void create_2D_linked(char* nm, char* sub, int sc) {
 		new_node->is_head = 1;
 		return;
 	}
-	//2,4번과 6번을 수정하라
 	Node2* pre_node = NULL;
 	Node2* curr_node = head2;
 	while (curr_node != NULL) {
@@ -87,12 +86,11 @@ void create_2D_linked(char* nm, char* sub, int sc) {
 		if (cmp_result > 0) { //newnode를 currnode 위에 넣어줘야해
 			//새로운 줄 생기는 거니까
 			new_node->is_head = 1;
-			if (pre_node == NULL){
-				head2 = new_node;
+			if (pre_node == NULL){ //만약 해드 앞에 넣어줘야하는 거라면
+				head2 = new_node; //새로운 노드가 head가 된다
 				new_node->down = curr_node;
 				return;
 			}
-			//연결이 됐는데 안돼
 			new_node->down = curr_node;
 			pre_node->down = new_node;
 			
@@ -108,20 +106,20 @@ void create_2D_linked(char* nm, char* sub, int sc) {
 							curr_node->is_head = 0;
 							new_node->is_head = 1;
 							head2 = new_node;
-							new_node->down = curr_node->down;
+							new_node->down = curr_node->down; //currnode는 newnode의 next가되고 newnode에 down을넘겨준다
 							new_node->next = curr_node;
 							
 							return;
 						}
 						curr_node->is_head = 0;
-						new_node->is_head = 1;
-						new_node->down = curr_node->down;
+						new_node->is_head = 1; //새로운 노드가 head가 된다.
+						new_node->down = curr_node->down; 
 						pre_node->down = new_node;
 						new_node->next = curr_node;
 						
 						return;
 					}
-					pre_node->next = new_node;
+					pre_node->next = new_node; //prenode와 currnode 사이에 newnode 넣어줌
 					new_node->next = curr_node;
 					
 					return;
@@ -136,46 +134,46 @@ void create_2D_linked(char* nm, char* sub, int sc) {
 
 
 		pre_node = curr_node;
-		curr_node = curr_node->down;
+		curr_node = curr_node->down; //아래 노드로 넘어가기
 
 	}
-	pre_node->down = new_node;
+	pre_node->down = new_node; //newnode는 마지막노드가된다
 	new_node->is_head = 1;
 	return;
 }
 void pirnt_2d_linked() {
 	FILE* fwp;
-	fwp = fopen("record.txt", "a");
+	fwp = fopen("record.txt", "a"); //record.txt에 이어쓰기
 	Node2* curr = head2;
-	while (curr->down != NULL) {
+	while (curr->down != NULL) { 
 		Node2* tmp = curr;
-		while (curr->next != NULL) {
-			printf("(%s, %s, %d)->", curr->name, curr->subject, curr->score);
-			fprintf(fwp,"(%s, %s, %d)->", curr->name, curr->subject, curr->score);
+		while (curr->next != NULL) { //그 행을 출력
+			printf("(%s, %s, %d)->", curr->name, curr->subject, curr->score); 
+			fprintf(fwp,"(%s, %s, %d)->", curr->name, curr->subject, curr->score); //학생이름, 과목명, 점수를 순서로 출력
 			curr = curr->next;
 		}
 		printf("(%s, %s, %d)\n", curr->name, curr->subject, curr->score);
 		printf("  |\n  V\n");
-		fprintf(fwp,"(%s, %s, %d)\n", curr->name, curr->subject, curr->score);
+		fprintf(fwp,"(%s, %s, %d)\n", curr->name, curr->subject, curr->score); //그행의 마지막 노드 출력
 		fprintf(fwp,"  |\n  V\n");
 		curr = tmp;
 		curr = curr->down;
 	}
-	while (curr->next != NULL) {
+	while (curr->next != NULL) { //그 행을 출력
 		printf("(%s, %s, %d)->", curr->name, curr->subject, curr->score);
-		fprintf(fwp,"(%s, %s, %d)->", curr->name, curr->subject, curr->score);
+		fprintf(fwp,"(%s, %s, %d)->", curr->name, curr->subject, curr->score); //학생이름, 과목명, 점수를 순서대로 출력
 		curr = curr->next;
 	}
 	printf("(%s, %s, %d)\n", curr->name, curr->subject, curr->score);
-	fprintf(fwp,"(%s, %s, %d)\n", curr->name, curr->subject, curr->score);
+	fprintf(fwp,"(%s, %s, %d)\n", curr->name, curr->subject, curr->score); //최종 마지막 노드 출력
 	fclose(fwp);
 }
 void create_linkedlist(char* nm, char* sub, int sc){
-	Node* new_node =(struct node*) calloc(sizeof(struct node),1);
+	Node* new_node =(struct node*) calloc(sizeof(struct node),1); //새로운 노드 생성
 	new_node->name = malloc(sizeof(struct node) * strlen(nm));
-	new_node->subject = malloc(sizeof(struct node) * strlen(sub));
+	new_node->subject = malloc(sizeof(struct node) * strlen(sub)); //메모리 동적할당
 	strcpy(new_node->name, nm);
-	strcpy(new_node->subject, sub);
+	strcpy(new_node->subject, sub); //정보저장해주기
 	new_node->score = sc;
 	new_node->next = NULL;
 	if (head == NULL) { //만약 리스트가 비어있다면
@@ -205,22 +203,22 @@ void create_linkedlist(char* nm, char* sub, int sc){
 			//과목 이름 기준으로 비교해서 넣기
 			while (curr_node != NULL) {
 				if (strcmp(curr_node->name, new_node->name) != 0) { //만약 다음 학생 까지 넘어가면
-					if (pre_node == NULL) {
-						head = new_node;
+					if (pre_node == NULL) { //만약 head뒤에 새로운 노드가들어가야한다면
+						head = new_node; //새로운 노드가 head가된다.
 						new_node->next = curr_node;
 						return;
 					}
-					pre_node->next = new_node;
+					pre_node->next = new_node; //prenode와 currnode 사이에 newnode를 넣어준다
 					new_node->next = curr_node;
 					return;
 				}
-				if (strcmp(curr_node->subject, new_node->subject) >= 0) {
+				if (strcmp(curr_node->subject, new_node->subject) >= 0) { //newnode가 currnode과목명보다 우선순위를 가진다면
 					if (pre_node == NULL) {
 						head = new_node;
-						new_node->next = curr_node;
+						new_node->next = curr_node; //newnode의 currnode전 노드는 newnode
 						return;
 					}
-					pre_node->next = new_node;
+					pre_node->next = new_node; //prenode와 currnode 사이에 newnode를 넣어줌
 					new_node->next = curr_node;
 					return;
 				}
@@ -235,10 +233,9 @@ void create_linkedlist(char* nm, char* sub, int sc){
 	}
 	if (pre_node == NULL) {
 		head = new_node;
-		printf("엥????????????????????????????????????????????????????\n");
 		return;
 	}
-	pre_node->next = new_node;
+	pre_node->next = new_node; //newnode는 리스트의 마지막자리에 들어간다.
 	return;
 }
 
@@ -256,8 +253,8 @@ void print_before_sort() {
 		if (curr->next == NULL) {
 			result += curr->score;
 			div++;
-			fprintf(fwp, "%s 학생의 평균 점수 : %lf\n\n", curr->name, result / div);
-			printf("%s 학생의 평균 점수 : %lf\n\n", curr->name, result / div);
+			fprintf(fwp, "%s 학생의 평균 점수 : %.2lf\n\n", curr->name, ((result / div) * 100) / 100);
+			printf("%s 학생의 평균 점수 : %.2lf\n\n", curr->name, ((result / div)*100)/100);
 			result = 0.0;
 			div = 0;
 			curr = curr->next;
@@ -266,8 +263,8 @@ void print_before_sort() {
 		if (strcmp(curr->name, curr->next->name) != 0) {
 			result += curr->score;
 			div++;
-			fprintf(fwp, "%s 학생의 평균 점수 : %lf\n\n", curr->name, result/div);
-			printf( "%s 학생의 평균 점수 : %lf\n\n", curr->name, result / div);
+			fprintf(fwp, "%s 학생의 평균 점수 : %.2lf\n\n", curr->name, ((result / div) * 100) / 100);
+			printf( "%s 학생의 평균 점수 : %.2lf\n\n", curr->name, ((result / div) * 100) / 100);
 			result = 0.0;
 			div = 0;
 			curr = curr->next;
@@ -357,28 +354,60 @@ void print_after_sort() {
 	fprintf(fwp, "\n\n이름\t과목\t점수\n");
 	
 	float result = 0.0;
+	float result2 = 0.0;
 	int div = 0;
+	int div2 = 0;
 	while (curr != NULL) {
 		fprintf(fwp, "%s\t%s\t%d\n", curr->name, curr->subject, curr->score);
 		if (curr->next == NULL) {
 			result += curr->score;
+			if (curr->score > 60) {
+				result2 += curr->score;
+				div2++;
+			}
 			div++;
-			fprintf(fwp, "%s 과목의 평균 점수 : %lf\n\n", curr->subject, result / div);
+			fprintf(fwp, "%s 과목의 평균 점수 : %.2lf\n", curr->subject, ((result / div)*100)/100);
+			fprintf(fwp, "%s 과목의 평균 점수(60점 이하 제외) : ", curr->subject);
+			if (div2 == 0) {
+				fprintf(fwp, "XX\n\n");
+			}
+			else {
+				fprintf(fwp, "%.2lf\n\n", ((result2 / div2) * 100) / 100);
+			}
 			result = 0.0;
+			result2 = 0.0;
 			div = 0;
+			div2 = 0;
 			curr = curr->next;
 			break;
 		}
 		if (strcmp(curr->subject, curr->next->subject) != 0) {
 			result += curr->score;
+			if (curr->score > 60) {
+				result2 += curr->score;
+				div2++;
+			}
 			div++;
-			fprintf(fwp, "%s 과목의 평균 점수 : %lf\n\n", curr->subject, result / div);
+			fprintf(fwp, "%s 과목의 평균 점수 : %.2lf\n", curr->subject, ((result / div) * 100) / 100);
+			fprintf(fwp, "%s 과목의 평균 점수(60점 이하 제외) : ", curr->subject);
+			if (div2 == 0) {
+				fprintf(fwp, "XX\n\n");
+			}
+			else {
+				fprintf(fwp, "%.2lf\n\n", ((result2 / div2) * 100) / 100);
+			}
 			result = 0.0;
+			result2 = 0.0;
 			div = 0;
+			div2 = 0;
 			curr = curr->next;
 			continue;
 		}
 		result += curr->score;
+		if (curr->score > 60) {
+			result2 += curr->score;
+			div2++;
+		}
 		div++;
 		curr = curr->next;
 	}
